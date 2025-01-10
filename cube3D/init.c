@@ -2,7 +2,7 @@
 
 void initialize_world_map(t_mlx *mlx)
 {
-    int world_map[24][24] = {
+    int world_map[MAP_ROWS][MAP_COLS] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -29,11 +29,31 @@ void initialize_world_map(t_mlx *mlx)
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    for (int i = 0; i < 24; i++) {
-        for (int j = 0; j < 24; j++) {
+    for (int i = 0; i < MAP_ROWS; i++) {
+        for (int j = 0; j < MAP_COLS; j++) {
 		mlx->world_map[i][j] = world_map[i][j];
 //	    printf("%d ", mlx->world_map[i][j]);
         }
 //	    printf("\n");
     }
+}
+
+void	create_player(t_mlx *mlx)
+{
+	t_player *player = malloc(sizeof(t_player));
+	if (!player)
+	{
+		printf ("malloc failed - player allocation\n");
+		return ;
+	}
+	player->x = WIDTH / 2;
+	player->y = HEIGHT / 2;
+	player->radius = 3;
+	player->turn_direction = 0;
+	player->walk_direction = 0;
+	player->rotation_angle = PI / 2;
+	player->move_speed= 2.0;
+	player->rotation_speed = 2 * (PI / 180);
+	mlx->player = player;
+
 }

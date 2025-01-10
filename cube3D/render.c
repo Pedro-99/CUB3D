@@ -3,6 +3,57 @@
 
 
 
+// void player_movement(t_mlx *mlx)
+// {
+//     float	move_step;
+//     float	new_player_x;
+//     float	new_player_y;
+
+//     // Update the player's rotation angle based on turn direction
+//     mlx->player->rotation_angle += mlx->player->turn_direction * mlx->player->rotation_speed;
+
+//     // Calculate the movement step based on walk direction and movement speed
+//     move_step = mlx->player->walk_direction * mlx->player->move_speed;
+
+//     // Calculate new player position
+//     new_player_x = mlx->player->x + cos(mlx->player->rotation_angle) * move_step;
+//     new_player_y = mlx->player->y + sin(mlx->player->rotation_angle) * move_step;
+
+//     // TODO : Add collision detection here if needed
+//     // TODO : Check if the new position collides with walls or boundaries
+
+//     // Update player's position
+//     mlx->player->x = new_player_x;
+//     mlx->player->y = new_player_y;
+
+//     // Reset movement and turning directions after processing
+//     mlx->player->walk_direction = 0;
+//     mlx->player->turn_direction = 0;
+// }
+
+void player_movement(t_mlx *mlx)
+{
+    t_player *player = mlx->player;
+
+    // Update rotation angle
+    player->rotation_angle += player->turn_direction * player->rotation_speed;
+    player->rotation_angle = fmod(player->rotation_angle, 2 * PI); // Keep the angle in range [0, 2PI]
+
+    // Calculate movement direction
+    int move_step = player->walk_direction * player->move_speed;
+    float new_x = player->x + cos(player->rotation_angle) * move_step;
+    float new_y = player->y + sin(player->rotation_angle) * move_step;
+
+    // Update player position
+    player->x = (int)new_x;
+    player->y = (int)new_y;
+
+    // Reset movement flags
+    player->walk_direction = 0;
+    player->turn_direction = 0;
+}
+
+
 int render(t_mlx *mlx)
 {
 	int	i;
@@ -13,6 +64,11 @@ int render(t_mlx *mlx)
 	int	mutable_coordinateY;
     // Clear screen
 	int	cube_size; // Size of each "tile" on the map
+
+
+	// player_movement(mlx);
+
+	process_movement(mlx);
 
 	i = 0;
 	j = 0;
@@ -57,8 +113,11 @@ int render(t_mlx *mlx)
 		}
 		i++;
 	}
+	//  Draw Player	
 
-
+	circle(mlx);
+	line(mlx);
+	
     // Display the image
     mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
 
