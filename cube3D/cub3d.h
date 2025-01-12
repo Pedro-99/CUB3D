@@ -14,10 +14,19 @@
 # define ESC		53
 #define mapWidth 600
 #define mapHeight 600
-# define MAP_ROWS 24
-# define MAP_COLS 24
-#define WIDTH 1920
-#define HEIGHT 1080
+// # define MAP_ROWS 24
+// # define MAP_COLS 24
+# define WIDTH 600
+# define HEIGHT 400
+// #define WIDTH 1920
+// #define HEIGHT 1080
+
+// # define MAP_ROWS 15
+// # define MAP_COLS 40
+
+# define MAP_ROWS 20
+# define MAP_COLS 30
+# define CUBE_SIZE mapWidth / MAP_COLS
 
 # define PI 3.14159265358979323846
 
@@ -45,17 +54,15 @@ typedef struct s_mlx
 	int			rows;
 	int			cols;
 	int			color;
+	int			cube_size;
 	t_player		*player;
-	int			p_x;
-	int			p_y;
-	float			p_angle;
-	int			world_map[mapWidth][mapHeight];
+	int			world_map[MAP_ROWS][MAP_COLS];
 }		t_mlx;
 
 
-int	render(t_mlx *mlx);
+int		render(t_mlx *mlx);
 void	draw_pixel(t_mlx *mlx, int x, int y, int color);
-int	get_color(int worldMap[mapWidth][mapHeight], int i, int j);
+int		get_color(int worldMap[mapWidth][mapHeight], int i, int j);
 void 	cube(t_mlx *mlx, int x, int y, int color, int type);
 void	initialize_world_map(t_mlx *mlx);
 //void	mlx_get_screen_size(void *mlx_ptr, int *width, int *height);
