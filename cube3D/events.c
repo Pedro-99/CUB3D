@@ -55,9 +55,9 @@ int key_release_handler(int key, t_mlx *mlx)
 }
 
 
-void process_movement(t_mlx *mlx)
+void process_movement(t_data *data)
 {
-    t_player *player = mlx->player;
+    t_player *player = data->player;
 
     if (g_keys[UP])
         player->walk_direction = 1; // Move forward
@@ -69,9 +69,10 @@ void process_movement(t_mlx *mlx)
         player->turn_direction = 1; // Turn right
 
     // Apply movement and rotation
-    player_movement(mlx);
+    player_movement(data);
 
     // Reset directions for the next frame
     player->walk_direction = 0;
     player->turn_direction = 0;
 }
+

@@ -1,8 +1,10 @@
-CC = cc -g -fsanitize=address
+CC = cc -g
 CFLAGS = -Wall -Wextra -Werror
 MLX_FLAGS = -L/usr/local/lib/ -lmlx -framework OpenGL -framework AppKit
 
-SRC_FILES =	./render.c ./math_utils.c ./main.c ./events.c  ./init.c ./shapes.c ./mlx_utils.c
+SRC_FILES =	./render.c ./math_utils.c ./main.c ./events.c  ./init.c ./shapes.c ./mlx_utils.c \
+			./render_utils.c
+
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
