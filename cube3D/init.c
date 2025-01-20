@@ -85,9 +85,11 @@ void    init_rays(t_data *game)
         rays[i].hit_wall_x_at = 0;
         rays[i].hit_wall_y_at = 0;
         rays[i].distance = 0;
-        rays[i].ray_angle = normalizedAngle(ray_angle);
+        rays[i].ray_angle = ray_angle;
+        // rays[i].ray_angle = normalizedAngle(ray_angle);
         rays[i].is_vertical_hit_found = 0;
         ray_angle += FOV_ANGLE / NUM_RAYS;
+        // rays[i].render = render_ray;
         i++;
     }
     game->player->rays = rays;

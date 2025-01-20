@@ -50,6 +50,7 @@ typedef struct s_ray
     int		distance;
     int		is_vertical_hit_found;
 	renderfunc	render;
+	int		ray_index;
 }	t_ray;
 
 typedef struct s_player
@@ -63,6 +64,7 @@ typedef struct s_player
 	float	move_speed;
 	float	rotation_speed;
 	t_ray	*rays;
+	t_ray	casted_ray;
 	renderfunc	render;
 	cast		cast_rays;
 }	t_player;
@@ -91,7 +93,7 @@ typedef struct s_data
 	t_mlx		*mlx;
 	t_player	*player;
 	int			frames;
-	size_t	start_time;
+	size_t		start_time;
 }	t_data;
 
 
@@ -107,7 +109,8 @@ void 	initialize_world_map(t_data *data);
 void	create_player(t_mlx *mlx);
 void	circle(t_data *data);
 int		event_handler(int key, t_mlx *mlx);
-void	line(t_mlx * mlx, int *ray_id);
+
+void line(t_data *data, int len);
 void	player_movement(t_data *data);
 int		key_release_handler(int key, t_mlx *mlx);
 int		key_press_handler(int key, t_mlx *mlx);
@@ -119,7 +122,8 @@ void	render_ray(void *data);
 void	render_map(void *data);
 void	init_player(t_data *data);
 void    init_data(t_data *data, t_mlx *mlx);
-void	DDA(t_mlx *mlx, int X0, int Y0, int X1, int Y1);
+void	DDA(t_data *data, int X0, int Y0, int X1, int Y1);
+float normalizedAngle(float angle);
 
 
 #endif 

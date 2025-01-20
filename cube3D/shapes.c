@@ -75,46 +75,47 @@ void draw_line(t_mlx *mlx, int x1, int y1, int x2, int y2, int color)
 // }
 
 
-// void line(t_mlx *mlx)
-// {
-//     // TODO - draw line from (p.x, p.y to wall_hit.x, wall_hit.y)
-//     int x, y;
-//     float line_length = 100.0; // Length of the line
-//     float angle = mlx->player->rotation_angle;
+void line(t_data *data, int len)
+{
+    // TODO - draw line from (p.x, p.y to wall_hit.x, wall_hit.y)
+    int x, y;
+   // float line_length = 100.0; // Length of the line
+    float angle = data->player->rotation_angle;
 
-//     for (int i = 0; i < line_length; i++)
-//     {
-//         x = mlx->player->x + cos(angle) * i;
-//         y = mlx->player->y + sin(angle) * i;
-//         draw_pixel(mlx, x, y, 0x00ff00); // Draw line in green
-//     }
-// }
+    for (int i = 0; i < len; i++)
+    {
+        x = data->player->x + cos(angle) * i;
+        y = data->player->y + sin(angle) * i;
+        draw_pixel(data->mlx, x, y, 0x00ff00); // Draw line in green
+    }
+}
 
 
 int abs(int n) { return ((n > 0) ? n : (n * (-1))); } 
   
 // DDA Function for line generation 
-void DDA(t_mlx *mlx, int X0, int Y0, int X1, int Y1) 
+void DDA(t_data *data, int X0, int Y0, int X1, int Y1) 
 { 
     // calculate dx & dy 
     int dx = X1 - X0; 
-    int dy = Y1 - Y0; 
-  
+    int dy = Y1 - Y0;
+    float angle = data->player->rotation_angle;
     // calculate steps required for generating pixels 
     int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
-  
+  (void)angle;
     // calculate increment in x & y for each steps 
-    float Xinc = dx / (float)steps; 
+    float Xinc = (dx / (float)steps); 
     float Yinc = dy / (float)steps; 
   
     // Put pixel for each step 
     float X = X0; 
     float Y = Y0; 
-    for (int i = 0; i <= steps; i++) { 
-        draw_pixel(mlx, round(X), round(Y), 0x00ff00); // put pixel at (X,Y) 
+    // printf("X : %2.f Y : %2.f\tX0 : %2.f Y0 : %d\n", X, Y, X0, Y0);
+    for (int i = 0; i <= steps; i++) {
+        draw_pixel(data->mlx, round(X), round(Y), 0x00ff00); // put pixel at (X,Y) 
         X += Xinc; // increment in x at each step 
         Y += Yinc; // increment in y at each step 
         //delay(100); // for visualization of line- 
                     // generation step by step 
     } 
-} 
+}
