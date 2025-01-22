@@ -1,6 +1,6 @@
 #include "cub3d.h"
 
-double	distanceBetweenPoints(int x1, int y1, int x2, int y2)
+double	distanceBetweenPoints(double x1, double y1, double x2, double y2)
 {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
@@ -18,6 +18,7 @@ int	is_collision_found(t_data *data, int x, int y)
 
 	map_gridindexX = floor(x / CUBE_SIZE);
 	map_gridindexY = floor(y / CUBE_SIZE);
+
    
 	return (data->world_map[map_gridindexY][map_gridindexX] != 0);
 }
@@ -231,6 +232,7 @@ int render(t_data *data)
 	// }
 
     // Display the image
+	
     mlx_put_image_to_window(data->mlx->mlx, data->mlx->win, data->mlx->img, 0, 0);
 
 	}

@@ -46,7 +46,7 @@ void	init_player(t_data *data)
     // set_player_position(mlx);
 
     data->player->x = data->mlx->window_width / 2;
-    data->player->y = data->mlx->window_width / 2;
+    data->player->y = data->mlx->window_height / 2;
 	data->player->radius = 3;
 	data->player->turn_direction = 0;
 	data->player->walk_direction = 0;
@@ -56,9 +56,9 @@ void	init_player(t_data *data)
     data->player->render = render_player;
 }
 
-float normalizedAngle(float angle)
+double normalizedAngle(double angle)
 {
-    float normalized = fmod(angle, 2 * M_PI); // Use fmod for floating-point modulus
+    double normalized = fmod(angle, 2 * M_PI); // Use fmod for floating-point modulus
     if (normalized < 0) {
         normalized += 2 * M_PI; // Ensure the angle is positive
     }

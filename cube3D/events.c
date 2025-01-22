@@ -64,9 +64,9 @@ void process_movement(t_data *data)
     if (g_keys[DOWN])
         player->walk_direction = -1; // Move backward
     if (g_keys[LEFT])
-        player->turn_direction = -1; // Turn left
+        player->turn_direction = -0.2; // Turn left
     if (g_keys[RIGHT])
-        player->turn_direction = 1; // Turn right
+        player->turn_direction = 0.2; // Turn right
 
     // Apply movement and rotation
     player_movement(data);

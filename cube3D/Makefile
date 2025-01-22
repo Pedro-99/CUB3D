@@ -1,5 +1,5 @@
 CC = cc -g -fsanitize=address
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = #-Wall -Wextra -Werror
 MLX_FLAGS = -L/usr/local/lib/ -lmlx -framework OpenGL -framework AppKit
 
 SRC_FILES =	./render.c ./math_utils.c ./main.c ./events.c  ./init.c ./shapes.c ./mlx_utils.c \

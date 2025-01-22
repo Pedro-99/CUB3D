@@ -36,6 +36,8 @@
 # define WALL_STRIP_WIDTH 1            // Width of each wall strip
 # define NUM_RAYS  (WIDTH / WALL_STRIP_WIDTH) // Number of rays based on screen width
 
+#define EPSILON 1e-6
+
 
 # define PI 3.14159265358979323846
 
@@ -45,20 +47,24 @@ typedef void (*cast)(void *);
 typedef struct s_ray
 {
 	float	ray_angle;
-    int		hit_wall_x_at;
-    int		hit_wall_y_at;
-    int		distance;
+    double		hit_wall_x_at;
+    double		hit_wall_y_at;
+    double		distance;
     int		is_vertical_hit_found;
 	renderfunc	render;
 	int		ray_index;
+	int		isRayFacingUp;
+	int		isRayFacingDown;
+	int		isRayFacingRight;
+	int		isRayFacingLeft;
 }	t_ray;
 
 typedef struct s_player
 {
-	int		x;
-	int		y;
+	double		x;
+	double		y;
 	int		radius;
-	int		turn_direction;
+	float		turn_direction;
 	int		walk_direction;
 	float	rotation_angle;
 	float	move_speed;
@@ -87,6 +93,12 @@ typedef struct s_mlx
 	renderfunc	render;
 }		t_mlx;
 
+typedef enum
+{
+	HORIZONTAL,
+	VERTICAL,
+	UNDEFINED,
+}	Intersection;
 typedef struct s_data
 {
 	int			world_map[MAP_COLS][MAP_ROWS];
@@ -96,6 +108,20 @@ typedef struct s_data
 	size_t		start_time;
 }	t_data;
 
+typedef struct s_ray_inter
+{
+	Intersection	wall_inter_type;
+    double			hori_inter_wall_hit_x_at;
+    double			hori_inter_wall_hit_y_at;
+    double			vert_inter_wall_hit_x_at;
+    double			vert_inter_wall_hit_y_at;
+    double			xintercept;
+	double			yintercept;
+	double			xstep;
+	double			ystep;
+	double				horiz_distance;
+	double				vert_distance;
+}	t_ray_inter;
 
 size_t	get_current_time(void);
 int	is_collision_found(t_data *data, int x, int y);
@@ -116,14 +142,14 @@ int		key_release_handler(int key, t_mlx *mlx);
 int		key_press_handler(int key, t_mlx *mlx);
 void	process_movement(t_data *data);
 void    init_rays(t_data *game);
-double	distanceBetweenPoints(int x1, int y1, int x2, int y2);
+double	distanceBetweenPoints(double x1, double y1, double x2, double y2);
 void	render_player(void *data);
 void	render_ray(void *data);
 void	render_map(void *data);
 void	init_player(t_data *data);
 void    init_data(t_data *data, t_mlx *mlx);
-void	DDA(t_data *data, int X0, int Y0, int X1, int Y1);
-float normalizedAngle(float angle);
+void	DDA(t_data *data, double X0, double Y0, double X1, double Y1, int x);
+double normalizedAngle(double angle);
 
 
 #endif 

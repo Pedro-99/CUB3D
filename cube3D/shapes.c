@@ -58,6 +58,38 @@ void draw_line(t_mlx *mlx, int x1, int y1, int x2, int y2, int color)
     }
 }
 
+void draw_dda_line(t_mlx *mlx, double x1, double y1, double x2, double y2, int color)
+{
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double steps;
+    
+    // Determine the number of steps needed
+    if (fabs(dx) > fabs(dy))
+        steps = fabs(dx);
+    else
+        steps = fabs(dy);
+    
+    // Calculate increment values
+    double x_increment = dx / steps;
+    double y_increment = dy / steps;
+    
+    // Starting position
+    double x = x1;
+    double y = y1;
+    
+    // Draw initial point
+    draw_pixel(mlx, x1, y1, color);
+    
+    // Draw the line
+    for (int i = 0; i < steps; i++)
+    {
+        x += x_increment;
+        y += y_increment;
+        draw_pixel(mlx, x, y, color);
+    }
+}
+
 // // Function to calculate the end point of the line and draw it
 // void line(t_mlx *mlx, int *ray_id)
 // {
@@ -94,7 +126,7 @@ void line(t_data *data, int len)
 int abs(int n) { return ((n > 0) ? n : (n * (-1))); } 
   
 // DDA Function for line generation 
-void DDA(t_data *data, int X0, int Y0, int X1, int Y1) 
+void DDA(t_data *data, double X0, double Y0, double X1, double Y1, int x) 
 { 
     // calculate dx & dy 
     int dx = X1 - X0; 
@@ -104,18 +136,27 @@ void DDA(t_data *data, int X0, int Y0, int X1, int Y1)
     int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
   (void)angle;
     // calculate increment in x & y for each steps 
-    float Xinc = (dx / (float)steps); 
-    float Yinc = dy / (float)steps; 
+    // float Xinc = (dx / (float)steps); 
+    // float Yinc = dy / (float)steps; 
   
     // Put pixel for each step 
     float X = X0; 
     float Y = Y0; 
+    // printf("(%f, %f)\t(%f, %f)\n", X0, Y0, X1, Y1);
+    // printf("Player (%f, %f)\t(%d, %d)\n", X0, Y0, (int)X0 / CUBE_SIZE, (int)Y0 / CUBE_SIZE);
+    int color = 0x000000;
+    // if (X1 == CUBE_SIZE * 22 && Y1 == CUBE_SIZE * 17)
+    // {
+    //     color = 0xFF0000;
+    // }
+    draw_dda_line(data->mlx, X0, Y0, X1, Y1, color);
     // printf("X : %2.f Y : %2.f\tX0 : %2.f Y0 : %d\n", X, Y, X0, Y0);
-    for (int i = 0; i <= steps; i++) {
-        draw_pixel(data->mlx, round(X), round(Y), 0x00ff00); // put pixel at (X,Y) 
-        X += Xinc; // increment in x at each step 
-        Y += Yinc; // increment in y at each step 
-        //delay(100); // for visualization of line- 
-                    // generation step by step 
-    } 
+    // draw_line(data->mlx, X0, Y0, X1, Y1, 0x000000);
+    // for (int i = 0; i <= steps; i++) {
+    //     draw_pixel(data->mlx, floor(X), floor(Y), 0x000000); // put pixel at (X,Y) 
+    //     X += Xinc; // increment in x at each step 
+    //     Y += Yinc; // increment in y at each step 
+    //     //delay(100); // for visualization of line- 
+    //                 // generation step by step 
+    // } 
 }
