@@ -6,4 +6,4 @@ cd cub3d_project
 # Uncomment next line if MLX42 isn’t in repo
 # git clone https://github.com/codam-coding-college/MLX42.git MLX42
 make
-echo "Setup complete! Run './cub3d path/to/map.cub' to start."
+echo "Setup complete! Run './cub3d path/to/map.cub' to start." # ./assets/maps/tiny.cub nha fin kaynin l maps
