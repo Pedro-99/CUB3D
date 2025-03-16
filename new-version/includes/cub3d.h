@@ -13,7 +13,7 @@
 #define WIDTH 800
 #define HEIGHT 600
 #define FOV 60
-#define TILE_SIZE 64
+#define TILE_UNIT 64
 
 typedef struct s_player {
 	double x;
@@ -55,5 +55,9 @@ void    load_textures(t_data *data);
 void    free_textures(t_data *data);
 double	to_radian(int value);
 void    draw_ceil_and_floor(t_data *data);
+void    move_forward(t_data *data, double move_speed);
+void    move_backward(t_data *data, double move_speed);
+void    turn_right(t_data *data, double rot_speed);
+void    turn_left(t_data *data, double rot_speed);
 
 #endif
