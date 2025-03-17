@@ -7,7 +7,7 @@ void ft_render(void *param)
 	int		y;
 
 	data = (t_data *)param;
-	ft_memset(data->img->pixels, 0, data->img->width * data->img->height * sizeof(uint32_t));
+	ft_memset(data->img->pixels, 0, data->img->width * data->img->height * sizeof(int));
 
 	double fov = to_radian(FOV);
 	double ray_angle_increment = fov / data->config.width;
@@ -16,15 +16,15 @@ void ft_render(void *param)
 	x = 0;
 	while (x < data->config.width)
 	{
-		double ray_angle = data->player.angle - (fov / 2) + (x * ray_angle_increment);
-		int side;
-		double wall_x;
-		double wall_dist = cast_ray(data, ray_angle, &side, &wall_x);
+		double	ray_angle = data->player.angle - (fov / 2) + (x * ray_angle_increment);
+		int 	side;
+		double 	wall_x;
+		double 	wall_dist = cast_ray(data, ray_angle, &side, &wall_x);
 
 		if (side == -1)
 			continue;
 
-		double wall_height = (data->config.height * TILE_SIZE) / wall_dist;
+		double wall_height = (data->config.height * TILE_UNIT) / wall_dist;
 		if (wall_height > data->config.height)
 			wall_height = data->config.height;
 
@@ -35,9 +35,15 @@ void ft_render(void *param)
 		double ray_dir_x = cos(ray_angle);
 		double ray_dir_y = sin(ray_angle);
 		if (side == 0) {
-			texture = (ray_dir_x > 0) ? data->ea_tex : data->we_tex;
+			if (ray_dir_x > 0)
+				texture = data->ea_tex;
+			else
+				texture = data->we_tex;
 		} else {
-			texture = (ray_dir_y > 0) ? data->so_tex : data->no_tex;
+			if (ray_dir_y > 0)
+				texture = data->so_tex;
+			else
+				texture = data->no_tex;
 		}
 
 		if (!texture)
@@ -53,7 +59,7 @@ void ft_render(void *param)
 			if (y >= 0 && y < data->config.height)
 			{
 				int tex_y = (int)(((y - start_y) * texture->height) / wall_height);
-				uint32_t color = ((uint32_t *)texture->pixels)[tex_y * texture->width + tex_x];
+				int color = ((int *)texture->pixels)[tex_y * texture->width + tex_x];
 				mlx_put_pixel(data->img, x, y, color);
 			}
 			y++;

@@ -1,3 +1,4 @@
+R 800 600
 NO ./assets/textures/wall1A.png
 SO ./assets/textures/wall2A.png
 WE ./assets/textures/wall3A.png
@@ -5,8 +6,9 @@ EA ./assets/textures/wall4A.png
 F 220,100,0
 C 225,30,0
 
-11111
-10001
-10N01
-10001
-11111
+111111
+100001
+10N001
+100101
+100001
+111111

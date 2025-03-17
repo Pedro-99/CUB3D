@@ -3,11 +3,12 @@ NAME = cub3d
 
 # Compiler and Flags
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 
 # Directories
 SRC_DIR = src
 SRC_DIR_LIBFT = src/libft
+SRC_DIR_GNL = src/get-next-line
 OBJ_DIR = obj
 INC_DIR = includes
 MLX_DIR = MLX42
@@ -20,7 +21,13 @@ LIBFT_SRCS = $(SRC_DIR_LIBFT)/ft_strchr.c \
              $(SRC_DIR_LIBFT)/ft_memset.c \
              $(SRC_DIR_LIBFT)/ft_strlen.c \
              $(SRC_DIR_LIBFT)/ft_strlcpy.c \
+             $(SRC_DIR_LIBFT)/ft_split.c \
+             $(SRC_DIR_LIBFT)/ft_atoi.c \
              $(SRC_DIR_LIBFT)/ft_memcpy.c \
+
+# GetNextLine Source Files 
+GNL_SRCS = $(SRC_DIR_GNL)/get_next_line.c \
+             $(SRC_DIR_GNL)/get_next_line_utils.c \
 
 # Source Files (Core)
 SRCS = $(SRC_DIR)/main.c \
@@ -33,7 +40,7 @@ SRCS = $(SRC_DIR)/main.c \
        $(SRC_DIR)/utils.c
 
 # Object Files
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $(LIBFT_SRCS:$(SRC_DIR_LIBFT)/%.c=$(OBJ_DIR)/%.o)
+OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $(LIBFT_SRCS:$(SRC_DIR_LIBFT)/%.c=$(OBJ_DIR)/%.o) $(GNL_SRCS:$(SRC_DIR_GNL)/%.c=$(OBJ_DIR)/%.o)
 
 # Header Files
 HEADERS = $(INC_DIR)/cub3d.h
@@ -59,6 +66,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 
 # Compile source files from src/libft/ into object files
 $(OBJ_DIR)/%.o: $(SRC_DIR_LIBFT)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -MMD -MP -c $< -o $@
+
+# Compile source files from src/get-next-line/ into object files
+$(OBJ_DIR)/%.o: $(SRC_DIR_GNL)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -MMD -MP -c $< -o $@
 
 # Create object directory
