@@ -3,8 +3,7 @@ NAME = cub3d
 
 # Compiler and Flags
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-
+CFLAGS = -Wall -Wextra -Werror -g
 # Directories
 SRC_DIR = src
 SRC_DIR_LIBFT = src/libft
@@ -24,6 +23,7 @@ LIBFT_SRCS = $(SRC_DIR_LIBFT)/ft_strchr.c \
              $(SRC_DIR_LIBFT)/ft_split.c \
              $(SRC_DIR_LIBFT)/ft_atoi.c \
              $(SRC_DIR_LIBFT)/ft_memcpy.c \
+             $(SRC_DIR_LIBFT)/ft_lst_add_back.c \
 
 # GetNextLine Source Files 
 GNL_SRCS = $(SRC_DIR_GNL)/get_next_line.c \

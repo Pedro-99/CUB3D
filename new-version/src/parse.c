@@ -1,24 +1,83 @@
 #include "cub3d.h"
 
+int	check_spacee(char **colors)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (colors[i])
+	{
+		while (colors[i][j])
+		{
+			while (colors[i][j] && colors[i][j] != ' ' && colors[i][j] != '\t')
+				j++;
+			while (colors[i][j] && (colors[i][j] == ' ' || colors[i][j] == '\t'))
+				j++;
+			if (colors[i][j] && (colors[i][j] >= '0' && colors[i][j] <= '9'))
+				return (1);
+		}
+		i++;
+		j = 0;
+	}
+	return (0);
+}
+
+int check_again(char **colors)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (colors[i])
+	{
+		while (colors[i][j])
+		{
+			if ((colors[i][j] >= '0' && colors[i][j] <= '9') || colors[i][j] == ' ' || colors[i][j] == '\t')
+				j++;
+			else
+				return (1);
+		}
+		i++;
+		j = 0;
+	}
+	return (0);
+}
+
 static int parse_color(char *line)
 {
 	int     r, g, b;
 	char    **colors;
+	int i = 0;
+	int		j;
 
+	j = 0;
+	while (line[j])
+	{
+		if (line[j] == ',')
+			i++;
+		j++;
+	}
 	colors = ft_split(line, ',');
 	if (!colors)
-		ft_error("Memory allocation failed");
-
-	int i = 0;
-	while (colors[i])
+	ft_error("Memory allocation failed");
+	if (i != 2) 
+	{
 		i++;
-	if (i != 3) {
 		while (i > 0)
-			free(colors[--i]);
+		free(colors[--i]);
 		free(colors);
 		ft_error("Invalid RGB color format");
 	}
-
+	i = 0;
+	while (colors[i])
+		i++;
+	if (i != 3)
+		ft_error("Invalid RGB color format");
+	if (check_spacee(colors) || check_again(colors))
+	ft_error("Invalid RGB color format");
 	r = ft_atoi(colors[0]);
 	g = ft_atoi(colors[1]);
 	b = ft_atoi(colors[2]);
@@ -51,47 +110,6 @@ static void measure_map(char **lines, int *map_height, int *map_width, int line_
 			(*map_height)++;
 		i++;
 	}
-}
-
-static void flood_fill(char **map, int x, int y, int width, int height, int *valid)
-{
-    if (x < 0 || x >= width || y < 0 || y >= height || map[y][x] == ' ') {
-        *valid = 0; // Hit a space or out-of-bounds: map is invalid
-        return;
-    }
-    if (map[y][x] == '1' || map[y][x] == 'X') // Wall or already visited
-        return;
-
-    map[y][x] = 'X'; // Mark as visited
-    flood_fill(map, x + 1, y, width, height, valid);
-    flood_fill(map, x - 1, y, width, height, valid);
-    flood_fill(map, x, y + 1, width, height, valid);
-    flood_fill(map, x, y - 1, width, height, valid);
-}
-
-static void validate_map_boundaries(t_config *config, t_data *data)
-{
-    char **map_copy = malloc(sizeof(char *) * config->map_height);
-	int valid = 1;
-	int i = 0;
-    while (i < config->map_height)
-	{
-        map_copy[i] = ft_strdup(config->map[i]);
-		i++;
-	}
-
-    flood_fill(map_copy, data->player.x / TILE_UNIT, data->player.y / TILE_UNIT,
-               config->map_width, config->map_height, &valid);
-	i = 0;
-    while (i < config->map_height)
-	{
-        free(map_copy[i]);
-		i++;
-	}
-    free(map_copy);
-
-    if (!valid)
-        ft_error("Map is not enclosed around player");
 }
 
 static void parse_map(t_config *config, t_data *data, char **map_lines, int line_count)
@@ -144,9 +162,168 @@ static void parse_map(t_config *config, t_data *data, char **map_lines, int line
 	}
 }
 
+int len_cal(t_list *list)
+{
+	size_t i;
+
+	i = 0;
+	while (list)
+	{
+		if (ft_strlen(list->str) > i)
+			i = ft_strlen(list->str);
+		list = list->next;
+	}
+	return (i);
+}
+
+char **list_to_array(t_list *list)
+{
+	t_list *lst;
+	char **map;
+	int i;
+	int	len;
+
+	i = 0;
+	len = len_cal(list);
+	lst = list;
+	while (lst)
+	{
+		i++;
+		lst = lst->next;
+	}
+	map = malloc((i + 1) * sizeof(char *));
+	i = 0;
+	while (list)
+	{
+		map[i] = ft_strdup1(list->str, len);
+		i++;
+		list = list->next;
+	}
+	map[i] = NULL;
+	i = 0;
+	return (map);
+}
+
+int check_sides(char **map1)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (map1[0][j])
+	{
+		while (map1[0][j] == ' ' || map1[0][j] == '\t')
+			j++;
+		if (map1[0][j] != '1' && map1[0][j] != ' ' && map1[0][j] != '\t' && map1[0][j] != '\n')
+			return (1);
+		j++;
+	}
+	j = 0;
+	while (map1[i + 1])
+		i++;
+	while (map1[i][j])
+	{
+		while (map1[i][j] == ' ' || map1[i][j] == '\t')
+			j++;
+		if (map1[i][j] != '1' && map1[i][j] != ' ' && map1[i][j] != '\t' && map1[i][j] != '\n')
+			return (1);
+		j++;
+	}
+	return (0);
+}
+
+int check_zero(char **map, int i, int j)
+{
+	// if (!map[i][j + 1])
+	// 	return (1);
+	if (map[i][j + 1] != '0' && map[i][j + 1] != '1' && map[i][j + 1] != 'S' && map[i][j + 1] != 'W' && 
+		map[i][j + 1] != 'E' && map[i][j + 1] != 'N')
+		return (1);
+	if (map[i][j - 1] != '0' && map[i][j - 1] != '1' && map[i][j - 1] != 'S' && map[i][j - 1] != 'W' && 
+		map[i][j - 1] != 'E' && map[i][j - 1] != 'N')
+		return (1);
+	if (map[i + 1][j] != '0' && map[i + 1][j] != '1' && map[i + 1][j] != 'S' && map[i + 1][j] != 'W' && 
+		map[i + 1][j] != 'E' && map[i + 1][j] != 'N')
+		return (1);
+	if (map[i - 1][j] != '0' && map[i - 1][j] != '1' && map[i - 1][j] != 'S' && map[i - 1][j] != 'W' && 
+		map[i - 1][j] != 'E' && map[i - 1][j] != 'N')
+		return (1);
+	
+	return (0);
+}
+
+int parse_1(char **map1, t_config **config)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while(map1[i])
+	{
+		if (check_sides(map1))
+			return (1);
+		if (!map1[i + 1])
+			break;
+		while (map1[i][j])
+		{
+			if (map1[i][j] == ' ' || map1[i][j] == '\t')
+			{
+				j++;
+				continue;
+			}
+			if (map1[i][j] == 'S' || map1[i][j] == 'N'|| map1[i][j] == 'E'|| map1[i][j] == 'W')
+			{
+				if ((*config)->flag_player == 0)
+				{
+					// data_player(map1[i][j], data);
+					(*config)->flag_player = 1;
+				}
+				else
+					return(1);
+			}
+
+			if (map1[i][j] == '0')
+			{
+				if (check_zero(map1, i, j))
+					return (1);
+			}
+			j++;
+		}
+		i++;
+		j = 0;
+	}
+	return (0);
+}
+
+int check_line(char *line)
+{
+	int i;
+	int index = 0;
+	
+	i = 0;
+	if (line[0] == '\n')
+	return (1);
+	while (line[i]!= '\0')
+	{
+			// printf("%s", line);
+			if(line[i] == ' ' || line[i] == '\t' || line[i]== '\n')
+				index++;
+			i++;
+		}
+		if (i == index)
+			return(1);
+	return (0);
+}
+
 void parse_cub_file(const char *filename, t_data *data)
 {
 	int fd;
+	int error_flag = 0;
+	t_list *list = NULL;
+	t_list *list_copy = NULL;
+	char **map1;
 	t_config *config;
 
 	fd = open(filename, O_RDONLY);
@@ -155,10 +332,8 @@ void parse_cub_file(const char *filename, t_data *data)
 
 	char *line;
 	int map_started = 0;
-	char *map_lines[1024];
 	int line_count = 0;
 	int map_line_start = 0;
-	int i;
 
 	config = &data->config;
 	config->width = WIDTH;
@@ -167,6 +342,7 @@ void parse_cub_file(const char *filename, t_data *data)
 	config->so_texture = NULL;
 	config->we_texture = NULL;
 	config->ea_texture = NULL;
+	config->flag_player = 0;
 	config->floor_color = 0;
 	config->ceil_color = 0;
 	config->map = NULL;
@@ -174,41 +350,19 @@ void parse_cub_file(const char *filename, t_data *data)
 	while ((line = get_next_line(fd)) != NULL)
 	{
 		char *trimmed = ft_strtrim(line, " \t\n");
-		if (!trimmed || *trimmed == '\0')
+		if (!trimmed)
+		{
+			// free
+
+			
+		}
+		if (*trimmed == '\0' && !map_started)
 		{
 			free(trimmed);
 			free(line);
 			continue;
 		}
-
-		if (!map_started && ft_strncmp(trimmed, "R ", 2) == 0)
-		{
-            char **res_split = ft_split(trimmed, ' ');
-            if (!res_split)
-                ft_error("Memory allocation failed");
-
-            int i = 0;
-            while (res_split[i])
-                i++;
-            if (i != 3 || ft_strncmp(res_split[0], "R", 2) != 0) {
-                while (i > 0)
-                    free(res_split[--i]);
-                free(res_split);
-                ft_error("Invalid resolution");
-            }
-
-            config->width = ft_atoi(res_split[1]);
-            config->height = ft_atoi(res_split[2]);
-
-            i = 0;
-            while (res_split[i])
-                free(res_split[i++]);
-            free(res_split);
-
-            if (config->width <= 0 || config->height <= 0)
-                ft_error("Invalid resolution");
-        }
-		else if (!map_started && ft_strncmp(trimmed, "NO ", 3) == 0)
+		if (!map_started && ft_strncmp(trimmed, "NO ", 3) == 0 && !config->no_texture)
 		{
 			char *path_start = ft_strtrim(trimmed + 3, " \t\n");
 			if (!path_start) ft_error("Memory allocation failed");
@@ -216,41 +370,41 @@ void parse_cub_file(const char *filename, t_data *data)
 			free(path_start);
 			if (!config->no_texture) ft_error("Texture allocation failed");
 		}
-		else if (!map_started && ft_strncmp(trimmed, "SO ", 3) == 0)
+		else if (!map_started && ft_strncmp(trimmed, "SO ", 3) == 0 && !config->so_texture)
 		{
 			char *path_start = ft_strtrim(trimmed + 3, " \t\n");
 			if (!path_start)
-				ft_error("Memory allocation failed");
+			ft_error("Memory allocation failed");
 			config->so_texture = ft_strdup(path_start);
 			free(path_start);
 			if (!config->so_texture) ft_error("Texture allocation failed");
 		}
-		else if (!map_started && ft_strncmp(trimmed, "WE ", 3) == 0)
+		else if (!map_started && ft_strncmp(trimmed, "WE ", 3) == 0 && !config->we_texture)
 		{
 			char *path_start = ft_strtrim(trimmed + 3, " \t\n");
 			if (!path_start)
-				ft_error("Memory allocation failed");
+			ft_error("Memory allocation failed");
 			config->we_texture = ft_strdup(path_start);
 			free(path_start);
 			if (!config->we_texture)
-				ft_error("Texture allocation failed");
+			ft_error("Texture allocation failed");
 		}
-		else if (!map_started && ft_strncmp(trimmed, "EA ", 3) == 0)
+		else if (!map_started && ft_strncmp(trimmed, "EA ", 3) == 0 && !config->ea_texture)
 		{
 			char *path_start = ft_strtrim(trimmed + 3, " \t\n");
 			if (!path_start)
-				ft_error("Memory allocation failed");
+			ft_error("Memory allocation failed");
 			config->ea_texture = ft_strdup(path_start);
 			free(path_start);
 			if (!config->ea_texture) ft_error("Texture allocation failed");
 		}
-		else if (!map_started && ft_strncmp(trimmed, "F ", 2) == 0) {
+		else if (!map_started && ft_strncmp(trimmed, "F ", 2) == 0 && !config->floor_color) {
 			char *color_str = ft_strtrim(trimmed + 2, " \t\n");
 			if (!color_str) ft_error("Memory allocation failed");
 			config->floor_color = parse_color(color_str);
 			free(color_str);
 		}
-		else if (!map_started && ft_strncmp(trimmed, "C ", 2) == 0) {
+		else if (!map_started && ft_strncmp(trimmed, "C ", 2) == 0 && !config->ceil_color) {
 			char *color_str = ft_strtrim(trimmed + 2, " \t\n");
 			if (!color_str) ft_error("Memory allocation failed");
 			config->ceil_color = parse_color(color_str);
@@ -258,35 +412,43 @@ void parse_cub_file(const char *filename, t_data *data)
 		}
 		else if (!map_started && strchr("01NSEW ", *trimmed)) {
 			map_started = 1;
+			error_flag = 1;
 			map_line_start = line_count;
 		}
-
-		if (map_started) {
-			if (line_count < 1024)
-				map_lines[line_count] = line;
-			else
-				free(line);
-		} else {
+		else if (!error_flag)
+		{
 			free(line);
+			ft_error("parce error\n");
 		}
+		
+		if (map_started)
+		{
+			if (!config->no_texture || !config->so_texture || !config->we_texture ||
+				!config->ea_texture || !config->ceil_color || !config->floor_color)
+				ft_error("Missing required elements in .cub file");
+			if(check_line(line))
+				ft_error("parsing map");
+			list_copy = ft_lstnew(line);
+			ft_lstadd_back(&list, list_copy);
+		}
+		else
+			free(line);
 		free(trimmed);
+
 		line_count++;
 	}
-
+	if (list)
+		map1 = list_to_array(list);
+	
+	if ((map1 && parse_1(map1, &config)))
+		ft_error("parsing map");
+	if (!config->flag_player)
+		ft_error("parsing map");
 	if (map_started)
-		parse_map(config, data, map_lines + map_line_start, line_count - map_line_start);
-	validate_map_boundaries(config, data);
-
-	i = map_line_start;
-	while (i < line_count)
-	{
-		if (i < 1024)
-			free(map_lines[i]);
-		i++;
-	}
+		parse_map(config, data, map1, line_count - map_line_start);
 	close(fd);
 
 	if (!config->no_texture || !config->so_texture || !config->we_texture ||
-		!config->ea_texture || !config->map)
+		!config->ea_texture)
 		ft_error("Missing required elements in .cub file");
 }

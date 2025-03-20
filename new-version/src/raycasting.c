@@ -52,11 +52,11 @@ double	cast_ray(t_data *data, double ray_angle, int *side, double *wall_x)
 		{
 			side_dist_x += delta_dist_x;
 			map_x += step_x;
-			*side = 0;
+			*side = 0; // vertical
 		} else {
 			side_dist_y += delta_dist_y;
 			map_y += step_y;
-			*side = 1;
+			*side = 1; // horizontal
 		}
 
 		if (map_x < 0 || map_x >= data->config.map_width || map_y < 0 || map_y >= data->config.map_height)
@@ -80,8 +80,8 @@ double	cast_ray(t_data *data, double ray_angle, int *side, double *wall_x)
 			perp_wall_dist = (side_dist_y - delta_dist_y);
 			*wall_x = ray_x + perp_wall_dist * dx;
 		}
-		*wall_x = fmod(*wall_x, TILE_UNIT) / TILE_UNIT;
-		perp_wall_dist *= cos(ray_angle - data->player.angle);
+		*wall_x = fmod(*wall_x, TILE_UNIT) / TILE_UNIT; // to keep wallx between 0-1
+		perp_wall_dist *= cos(ray_angle - data->player.angle); // correct fesheye effect
 	}
 	else
 	{

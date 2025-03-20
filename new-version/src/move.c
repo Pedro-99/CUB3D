@@ -15,7 +15,32 @@ void    move_forward(t_data *data, double move_speed)
 	double new_y = data->player.y + sin(data->player.angle) * move_speed;
 	int map_x = (int)(new_x / TILE_UNIT);
 	int map_y = (int)(new_y / TILE_UNIT);
-	// printf("x: %d\ty: %d\tmap_x: %d\tmap_y: %d\n", (int)new_x, (int)new_y, map_x, map_y);
+	if (!check_collision(data, map_x, map_y))
+	{
+		data->player.x = new_x;
+		data->player.y = new_y;
+	}
+}
+
+void    move_right(t_data *data, double move_speed)
+{
+	double new_x = data->player.x + cos(data->player.angle + M_PI / 2) * move_speed;
+	double new_y = data->player.y + sin(data->player.angle + M_PI / 2) * move_speed;
+	int map_x = (int)(new_x / TILE_UNIT);
+	int map_y = (int)(new_y / TILE_UNIT);
+	if (!check_collision(data, map_x, map_y))
+	{
+		data->player.x = new_x;
+		data->player.y = new_y;
+	}
+}
+
+void    move_left(t_data *data, double move_speed)
+{
+	double new_x = data->player.x + cos(data->player.angle - M_PI / 2) * move_speed;
+	double new_y = data->player.y + sin(data->player.angle - M_PI / 2) * move_speed;
+	int map_x = (int)(new_x / TILE_UNIT);
+	int map_y = (int)(new_y / TILE_UNIT);
 	if (!check_collision(data, map_x, map_y))
 	{
 		data->player.x = new_x;
@@ -29,13 +54,13 @@ void    move_backward(t_data *data, double move_speed)
 	double new_y = data->player.y - sin(data->player.angle) * move_speed;
 	int map_x = (int)(new_x / TILE_UNIT);
 	int map_y = (int)(new_y / TILE_UNIT);
-	// printf("x: %d\ty: %d\tmap_x: %d\tmap_y: %d\n", (int)new_x, (int)new_y, map_x, map_y);
 	if (!check_collision(data, map_x, map_y))
     {
 		data->player.x = new_x;
 		data->player.y = new_y;
 	}
 }
+
 
 void    turn_right(t_data *data, double rot_speed)
 {

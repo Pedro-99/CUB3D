@@ -13,8 +13,14 @@ void ft_hook(void *param)
 	if (mlx_is_key_down(data->mlx, MLX_KEY_S)) {
 		move_backward(data, move_speed);
 	}
-	if (mlx_is_key_down(data->mlx, MLX_KEY_A))
+	if (mlx_is_key_down(data->mlx, MLX_KEY_LEFT))
 		turn_left(data, rot_speed);
+	if (mlx_is_key_down(data->mlx, MLX_KEY_A))
+		move_left(data, move_speed);
 	if (mlx_is_key_down(data->mlx, MLX_KEY_D))
+		move_right(data, move_speed);
+	if (mlx_is_key_down(data->mlx, MLX_KEY_RIGHT))
+	{
 		turn_right(data, rot_speed);
+	}
 }

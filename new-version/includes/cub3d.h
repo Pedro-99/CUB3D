@@ -21,12 +21,21 @@ typedef struct s_player {
 	double angle; // In radians
 } t_player;
 
+typedef struct s_list
+{
+	char *str;
+	struct s_list *next;
+} t_list;
+
+
+
 typedef struct s_config {
 	int width;
 	int height;
 	char *no_texture; // North texture path
+	int flag_player;
 	char *so_texture; // South texture path
-	char *we_texture; // West texture path
+	char *we_texture; // West texture path 
 	char *ea_texture; // East texture path
 	uint32_t floor_color; // RGBA packed as 0xRRGGBBFF
 	uint32_t ceil_color;  // RGBA packed as 0xRRGGBBFF
@@ -46,6 +55,9 @@ typedef struct s_data {
 	mlx_texture_t *ea_tex; // East texture
 } t_data;
 
+
+t_list	*ft_lstnew(char *content);
+void	ft_lstadd_back(t_list **lst, t_list *new);
 void    ft_render(void *param);
 void    ft_hook(void *param);
 double  cast_ray(t_data *data, double ray_angle, int *side, double *wall_x);
@@ -59,5 +71,8 @@ void    move_forward(t_data *data, double move_speed);
 void    move_backward(t_data *data, double move_speed);
 void    turn_right(t_data *data, double rot_speed);
 void    turn_left(t_data *data, double rot_speed);
+char	*ft_strdup1(const char *s1, int len);
+void    move_right(t_data *data, double move_speed);
+void    move_left(t_data *data, double move_speed);
 
 #endif

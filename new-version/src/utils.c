@@ -4,7 +4,7 @@ void ft_error(const char *str)
 {
 	printf("Error: %s\n", str);
 	fprintf(stderr, "%s\n", mlx_strerror(mlx_errno));
-	exit(EXIT_FAILURE);
+	exit(1);
 }
 
 void load_textures(t_data *data)
