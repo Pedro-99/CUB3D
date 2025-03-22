@@ -1,69 +1,82 @@
 #include "cub3d.h"
 
-void ft_render(void *param)
+static mlx_texture_t	*get_wall_texture(t_data *data, t_ray ray)
 {
-	t_data	*data;
+	double	ray_dir_x;
+	double	ray_dir_y;
+
+	ray_dir_x = cos(ray.angle);
+	ray_dir_y = sin(ray.angle);
+	if (ray.side == 0)
+	{
+		if (ray_dir_x > 0)
+			return (data->ea_tex);
+		return (data->we_tex);
+	}
+	else
+	{
+		if (ray_dir_y > 0)
+			return (data->so_tex);
+		return (data->no_tex);
+	}
+}
+
+static void	draw_wall_column(t_data *data, t_ray ray, int x, double wall_height)
+{
+	int				start_y;
+	int				end_y;
+	mlx_texture_t	*texture;
+	int				y;
+
+	start_y = (data->config.height - (int)wall_height) / 2;
+	end_y = start_y + (int)wall_height;
+	texture = get_wall_texture(data, ray);
+	if (!texture)
+		return ;
+	y = start_y;
+	while (y < end_y)
+	{
+		if (y >= 0 && y < data->config.height)
+		{
+			int	tex_x = (int)(ray.wall_x * texture->width);
+			int	tex_y = (int)(((y - start_y) * texture->height) / wall_height);
+			if ((ray.side == 0 && ray.dx < 0) || (ray.side == 1 && ray.dy > 0))
+				tex_x = texture->width - tex_x - 1;
+			mlx_put_pixel(data->img, x, y, ((int *)texture->pixels)[tex_y * texture->width + tex_x]);
+		}
+		y++;
+	}
+}
+
+static void	projection_3d(t_data *data, double fov, double ray_angle_increment)
+{
 	int		x;
-	int		y;
+	t_ray	ray;
 
-	data = (t_data *)param;
-	ft_memset(data->img->pixels, 0, data->img->width * data->img->height * sizeof(int));
-
-	double fov = to_radian(FOV);
-	double ray_angle_increment = fov / data->config.width; // distance between two rays 
-
-	draw_ceil_and_floor(data);
 	x = 0;
 	while (x < data->config.width)
 	{
-		double	ray_angle = data->player.angle - (fov / 2) + (x * ray_angle_increment); // the most left ray 
-		int 	side; // wash l horizontal wla l vertical
-		double 	wall_x; // fin bedqqbt dreb f l7ayt
-		double 	wall_dist = cast_ray(data, ray_angle, &side, &wall_x);
-
-		if (side == -1)
-			continue;
-
-		double wall_height = (data->config.height * TILE_UNIT) / wall_dist;
-		// if wall-HEIGHT > window HEIGHT
-			// wall-height = comfig height
-		int start_y = (data->config.height - (int)wall_height) / 2; // centri l mlawi (hakak charit or strip height)
-		// start_y = start_y % data->config.height; // dqrha rez9i
-		int end_y = start_y + (int)wall_height;
-
-		mlx_texture_t *texture;
-		double ray_dir_x = cos(ray_angle);
-		double ray_dir_y = sin(ray_angle);
-		if (side == 0) {
-			if (ray_dir_x > 0)
-				texture = data->ea_tex;
-			else
-				texture = data->we_tex;
-		} else {
-			if (ray_dir_y > 0)
-				texture = data->so_tex;
-			else
-				texture = data->no_tex;
-		}
-
-		if (!texture)
-			continue;
-
-		int tex_x = (int)(wall_x * texture->width); // texture width 512px 
-		if ((side == 0 && ray_dir_x < 0) || (side == 1 && ray_dir_y > 0))
-			tex_x = texture->width - tex_x - 1; // suppose tex-x is 1 then tex-x is 512 - 512 -1 = -1
-
-		y = start_y;
-		while (y < end_y)
+		ray.angle = data->player.angle - (fov / 2) + (x * ray_angle_increment);
+		ray.dist = cast_ray(data, &ray);
+		if (ray.side != -1)
 		{
-			if (y >= 0 && y < data->config.height)
-			{
-				int tex_y = (int)(((y - start_y) * texture->height) / wall_height);
-				int color = ((int *)texture->pixels)[tex_y * texture->width + tex_x];
-				mlx_put_pixel(data->img, x, y, color);
-			}
-			y++;
+			double	wall_height;
+
+			wall_height = (data->config.height * TILE_UNIT) / ray.dist;
+			draw_wall_column(data, ray, x, wall_height);
 		}
 		x++;
 	}
+}
+
+void	ft_render(void *param)
+{
+	t_data	*data;
+	double	fov;
+
+	data = (t_data *)param;
+	ft_memset(data->img->pixels, 0, data->img->width * data->img->height * sizeof(int));
+	fov = to_radian(FOV);
+	draw_ceil_and_floor(data);
+	projection_3d(data, fov, fov / data->config.width);
 }

@@ -42,8 +42,6 @@ SRCS = $(SRC_DIR)/main.c \
 # Object Files
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $(LIBFT_SRCS:$(SRC_DIR_LIBFT)/%.c=$(OBJ_DIR)/%.o) $(GNL_SRCS:$(SRC_DIR_GNL)/%.c=$(OBJ_DIR)/%.o)
 
-# Header Files
-HEADERS = $(INC_DIR)/cub3d.h
 
 # MLX42 Library
 MLX_LIB = $(MLX_DIR)/build/libmlx42.a
@@ -94,4 +92,3 @@ re: fclean all
 
 # Include dependency files
 -include $(DEPS)
-
